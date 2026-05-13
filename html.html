@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rebru.id — Visitor Feedback</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      :root {
+        --brown: #3b2a1a;
+        --coffee: #6b4226;
+        --caramel: #c4843a;
+        --cream: #f5efe4;
+        --white: #fdfaf5;
+        --grey: #9e8e7e;
+        --success: #4a7c59;
+      }
+
+      body {
+        background: var(--cream);
+        font-family: "DM Sans", sans-serif;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+      }
+
+      /* Background texture */
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          radial-gradient(
+            circle at 15% 20%,
+            rgba(107, 66, 38, 0.08) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 85% 80%,
+            rgba(196, 132, 58, 0.1) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .card {
+        position: relative;
+        z-index: 1;
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow:
+          0 8px 48px rgba(59, 42, 26, 0.14),
+          0 1px 0 rgba(255, 255, 255, 0.8) inset;
+        width: 100%;
+        max-width: 580px;
+        overflow: hidden;
+      }
+
+      /* Header */
+      .header {
+        background: var(--brown);
+        padding: 32px 36px 28px;
+        position: relative;
+        overflow: hidden;
+      }
+      .header::after {
+        content: "☕";
+        position: absolute;
+        right: 28px;
+        top: 18px;
+        font-size: 64px;
+        opacity: 0.08;
+        line-height: 1;
+      }
+      .logo-tag {
+        display: inline-block;
+        background: var(--caramel);
+        color: var(--white);
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        padding: 4px 12px;
+        border-radius: 100px;
+        margin-bottom: 14px;
+      }
+      .header h1 {
+        font-family: "Playfair Display", serif;
+        color: var(--white);
+        font-size: 28px;
+        line-height: 1.25;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .header p {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 13px;
+        font-weight: 300;
+        letter-spacing: 0.01em;
+      }
+
+      /* Body */
+      .body {
+        padding: 32px 36px 36px;
+      }
+
+      .field {
+        margin-bottom: 22px;
+      }
+      .field label {
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--coffee);
+        margin-bottom: 8px;
+      }
+      .field label .req {
+        color: var(--caramel);
+        margin-left: 2px;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      input[type="tel"],
+      textarea {
+        width: 100%;
+        background: var(--cream);
+        border: 1.5px solid rgba(107, 66, 38, 0.15);
+        border-radius: 12px;
+        padding: 13px 16px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 15px;
+        color: var(--brown);
+        outline: none;
+        transition:
+          border-color 0.2s,
+          box-shadow 0.2s;
+        -webkit-appearance: none;
+      }
+      input::placeholder,
+      textarea::placeholder {
+        color: var(--grey);
+      }
+      input:focus,
+      textarea:focus {
+        border-color: var(--caramel);
+        box-shadow: 0 0 0 3px rgba(196, 132, 58, 0.12);
+      }
+      textarea {
+        resize: none;
+        min-height: 100px;
+        line-height: 1.6;
+      }
+
+      .row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      /* Product checkboxes */
+      .products-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .product-item {
+        position: relative;
+        cursor: pointer;
+      }
+      .product-item input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .product-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--cream);
+        border: 1.5px solid rgba(107, 66, 38, 0.15);
+        border-radius: 12px;
+        padding: 11px 14px;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        user-select: none;
+      }
+      .product-item input:checked + .product-label {
+        border-color: var(--caramel);
+        background: rgba(196, 132, 58, 0.08);
+      }
+      .product-icon {
+        font-size: 20px;
+        flex-shrink: 0;
+      }
+      .product-name {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--brown);
+        line-height: 1.3;
+      }
+
+      /* Rating */
+      .stars {
+        display: flex;
+        gap: 8px;
+        margin-top: 2px;
+      }
+      .stars input {
+        display: none;
+      }
+      .stars label {
+        font-size: 32px;
+        cursor: pointer;
+        color: rgba(107, 66, 38, 0.2);
+        transition:
+          color 0.15s,
+          transform 0.1s;
+        line-height: 1;
+      }
+      .stars input:checked ~ label,
+      .stars label:hover,
+      .stars label:hover ~ label {
+        color: var(--caramel);
+      }
+      /* Reverse trick for star rating */
+      .stars {
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+      }
+      .stars label:hover,
+      .stars label:hover ~ label,
+      .stars input:checked ~ label {
+        color: var(--caramel);
+      }
+
+      /* Divider */
+      .divider {
+        border: none;
+        border-top: 1px solid rgba(107, 66, 38, 0.1);
+        margin: 4px 0 24px;
+      }
+
+      /* Submit */
+      .btn-submit {
+        width: 100%;
+        background: var(--brown);
+        color: var(--white);
+        border: none;
+        border-radius: 14px;
+        padding: 16px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        cursor: pointer;
+        transition:
+          background 0.2s,
+          transform 0.1s,
+          box-shadow 0.2s;
+        margin-top: 8px;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-submit:hover {
+        background: var(--coffee);
+        box-shadow: 0 4px 20px rgba(59, 42, 26, 0.25);
+      }
+      .btn-submit:active {
+        transform: scale(0.98);
+      }
+
+      /* Thank you screen */
+      .thankyou {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 36px;
+        min-height: 340px;
+      }
+      .thankyou.show {
+        display: flex;
+      }
+      .form-section.hide {
+        display: none;
+      }
+
+      .ty-icon {
+        width: 72px;
+        height: 72px;
+        background: rgba(74, 124, 89, 0.12);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin-bottom: 20px;
+        animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+      @keyframes popIn {
+        from {
+          transform: scale(0);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .ty-title {
+        font-family: "Playfair Display", serif;
+        font-size: 26px;
+        color: var(--brown);
+        margin-bottom: 10px;
+      }
+      .ty-sub {
+        font-size: 14px;
+        color: var(--grey);
+        line-height: 1.6;
+        max-width: 300px;
+        margin-bottom: 32px;
+      }
+      .btn-reset {
+        background: transparent;
+        border: 1.5px solid rgba(107, 66, 38, 0.25);
+        border-radius: 12px;
+        padding: 12px 28px;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        color: var(--coffee);
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+      }
+      .btn-reset:hover {
+        border-color: var(--caramel);
+        background: rgba(196, 132, 58, 0.06);
+      }
+
+      @media (max-width: 420px) {
+        .header {
+          padding: 24px 24px 20px;
+        }
+        .body {
+          padding: 24px 24px 28px;
+        }
+        .row-2 {
+          grid-template-columns: 1fr;
+        }
+        .products-grid {
+          grid-template-columns: 1fr;
+        }
+        .header h1 {
+          font-size: 23px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="header">
+        <div class="logo-tag">Rebru.id · Makassar</div>
+        <h1>Tell Us What You Think</h1>
+        <p>Your feedback helps us grow our circular economy mission.</p>
+      </div>
+
+      <div class="body form-section" id="formSection">
+        <!-- Name & Contact -->
+        <div class="field">
+          <label>Your Name <span class="req">*</span></label>
+          <input
+            type="text"
+            id="name"
+            placeholder="Full name"
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label>Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="hello@email.com"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label>WhatsApp / Phone</label>
+            <input
+              type="tel"
+              id="phone"
+              placeholder="+62 8xx xxxx xxxx"
+              autocomplete="off"
+            />
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Product Interest -->
+        <div class="field">
+          <label>Products I'm Interested In</label>
+          <div class="products-grid">
+            <label class="product-item">
+              <input type="checkbox" name="product" value="biochar" />
+              <span class="product-label">
+                <span class="product-icon">🌱</span>
+                <span class="product-name">Biochar</span>
+              </span>
+            </label>
+            <label class="product-item">
+              <input type="checkbox" name="product" value="briquettes" />
+              <span class="product-label">
+                <span class="product-icon">🔥</span>
+                <span class="product-name">Bio-Briquettes</span>
+              </span>
+            </label>
+            <label class="product-item">
+              <input type="checkbox" name="product" value="compost" />
+              <span class="product-label">
+                <span class="product-icon">♻️</span>
+                <span class="product-name">Compost</span>
+              </span>
+            </label>
+            <label class="product-item">
+              <input type="checkbox" name="product" value="coaster" />
+              <span class="product-label">
+                <span class="product-icon">☕</span>
+                <span class="product-name">Coaster</span>
+              </span>
+            </label>
+            <label class="product-item">
+              <input type="checkbox" name="product" value="candles" />
+              <span class="product-label">
+                <span class="product-icon">🕯️</span>
+                <span class="product-name">Scented Candles</span>
+              </span>
+            </label>
+            <label class="product-item">
+              <input type="checkbox" name="product" value="soap" />
+              <span class="product-label">
+                <span class="product-icon">🧼</span>
+                <span class="product-name">Coffee Soap</span>
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <hr class="divider" />
+
+        <!-- Overall Rating -->
+        <div class="field">
+          <label>Overall Impression</label>
+          <div class="stars">
+            <input type="radio" name="rating" id="s5" value="5" /><label
+              for="s5"
+              >★</label
+            >
+            <input type="radio" name="rating" id="s4" value="4" /><label
+              for="s4"
+              >★</label
+            >
+            <input type="radio" name="rating" id="s3" value="3" /><label
+              for="s3"
+              >★</label
+            >
+            <input type="radio" name="rating" id="s2" value="2" /><label
+              for="s2"
+              >★</label
+            >
+            <input type="radio" name="rating" id="s1" value="1" /><label
+              for="s1"
+              >★</label
+            >
+          </div>
+        </div>
+
+        <!-- Comments -->
+        <div class="field">
+          <label>Comments & Suggestions</label>
+          <textarea
+            id="comments"
+            placeholder="Share your thoughts, ideas, or questions about Rebru…"
+          ></textarea>
+        </div>
+
+        <button class="btn-submit" onclick="submitForm()">
+          Submit Feedback →
+        </button>
+      </div>
+
+      <!-- Thank You Screen -->
+      <div class="thankyou" id="thankyou">
+        <div class="ty-icon">✓</div>
+        <div class="ty-title">Terima Kasih!</div>
+        <p class="ty-sub">
+          Thank you for visiting Rebru's booth. Your feedback means a lot to us
+          and helps us build a better circular economy. 🌿
+        </p>
+        <button class="btn-reset" onclick="resetForm()">Next Visitor</button>
+      </div>
+    </div>
+
+    <script>
+      function submitForm() {
+        const name = document.getElementById("name").value.trim();
+        if (!name) {
+          document.getElementById("name").focus();
+          document.getElementById("name").style.borderColor = "#C4843A";
+          setTimeout(
+            () => (document.getElementById("name").style.borderColor = ""),
+            1500,
+          );
+          return;
+        }
+        document.getElementById("formSection").classList.add("hide");
+        document.getElementById("thankyou").classList.add("show");
+      }
+
+      function resetForm() {
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("phone").value = "";
+        document.getElementById("comments").value = "";
+        document
+          .querySelectorAll('input[type="checkbox"]')
+          .forEach((c) => (c.checked = false));
+        document
+          .querySelectorAll('input[type="radio"]')
+          .forEach((r) => (r.checked = false));
+        document.getElementById("thankyou").classList.remove("show");
+        document.getElementById("formSection").classList.remove("hide");
+      }
+    </script>
+  </body>
+</html>
