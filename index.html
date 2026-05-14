@@ -1,9 +1,13 @@
 <!doctype html>
-<html lang="en">
+<html lang="id">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rebru.id — Visitor Feedback</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☕</text></svg>"
+    />
     <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
       rel="stylesheet"
@@ -16,7 +20,6 @@
         margin: 0;
         padding: 0;
       }
-
       :root {
         --brown: #3b2a1a;
         --coffee: #6b4226;
@@ -24,9 +27,8 @@
         --cream: #f5efe4;
         --white: #fdfaf5;
         --grey: #9e8e7e;
-        --success: #4a7c59;
+        --red: #c0392b;
       }
-
       body {
         background: var(--cream);
         font-family: "DM Sans", sans-serif;
@@ -36,8 +38,6 @@
         justify-content: center;
         padding: 24px 16px;
       }
-
-      /* Background texture */
       body::before {
         content: "";
         position: fixed;
@@ -56,7 +56,6 @@
         pointer-events: none;
         z-index: 0;
       }
-
       .card {
         position: relative;
         z-index: 1;
@@ -69,8 +68,6 @@
         max-width: 580px;
         overflow: hidden;
       }
-
-      /* Header */
       .header {
         background: var(--brown);
         padding: 32px 36px 28px;
@@ -90,9 +87,8 @@
         display: inline-block;
         background: var(--caramel);
         color: var(--white);
-        font-family: "DM Sans", sans-serif;
-        font-weight: 500;
         font-size: 11px;
+        font-weight: 500;
         letter-spacing: 0.15em;
         text-transform: uppercase;
         padding: 4px 12px;
@@ -111,18 +107,14 @@
         color: rgba(255, 255, 255, 0.55);
         font-size: 13px;
         font-weight: 300;
-        letter-spacing: 0.01em;
       }
-
-      /* Body */
       .body {
         padding: 32px 36px 36px;
       }
-
       .field {
         margin-bottom: 22px;
       }
-      .field label {
+      .field > label {
         display: block;
         font-size: 12px;
         font-weight: 500;
@@ -131,11 +123,10 @@
         color: var(--coffee);
         margin-bottom: 8px;
       }
-      .field label .req {
+      .field > label .req {
         color: var(--caramel);
         margin-left: 2px;
       }
-
       input[type="text"],
       input[type="email"],
       input[type="tel"],
@@ -163,19 +154,28 @@
         border-color: var(--caramel);
         box-shadow: 0 0 0 3px rgba(196, 132, 58, 0.12);
       }
+      input[aria-invalid="true"],
+      textarea[aria-invalid="true"] {
+        border-color: var(--red);
+        box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.1);
+      }
       textarea {
         resize: none;
         min-height: 100px;
         line-height: 1.6;
       }
-
+      .field-error {
+        display: block;
+        font-size: 12px;
+        color: var(--red);
+        margin-top: 5px;
+        min-height: 16px;
+      }
       .row-2 {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 14px;
       }
-
-      /* Product checkboxes */
       .products-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -200,10 +200,11 @@
         border-radius: 12px;
         padding: 11px 14px;
         cursor: pointer;
+        user-select: none;
         transition:
           border-color 0.2s,
           background 0.2s;
-        user-select: none;
+        min-height: 44px;
       }
       .product-item input:checked + .product-label {
         border-color: var(--caramel);
@@ -219,10 +220,10 @@
         color: var(--brown);
         line-height: 1.3;
       }
-
-      /* Rating */
       .stars {
         display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
         gap: 8px;
         margin-top: 2px;
       }
@@ -232,36 +233,23 @@
       .stars label {
         font-size: 32px;
         cursor: pointer;
-        color: rgba(107, 66, 38, 0.2);
-        transition:
-          color 0.15s,
-          transform 0.1s;
         line-height: 1;
-      }
-      .stars input:checked ~ label,
-      .stars label:hover,
-      .stars label:hover ~ label {
-        color: var(--caramel);
-      }
-      /* Reverse trick for star rating */
-      .stars {
-        flex-direction: row-reverse;
-        justify-content: flex-end;
+        color: rgba(107, 66, 38, 0.2);
+        transition: color 0.15s;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
       }
       .stars label:hover,
       .stars label:hover ~ label,
       .stars input:checked ~ label {
         color: var(--caramel);
       }
-
-      /* Divider */
       .divider {
         border: none;
         border-top: 1px solid rgba(107, 66, 38, 0.1);
         margin: 4px 0 24px;
       }
-
-      /* Submit */
       .btn-submit {
         width: 100%;
         background: var(--brown);
@@ -279,18 +267,40 @@
           transform 0.1s,
           box-shadow 0.2s;
         margin-top: 8px;
-        position: relative;
-        overflow: hidden;
       }
-      .btn-submit:hover {
+      .btn-submit:hover:not(:disabled) {
         background: var(--coffee);
         box-shadow: 0 4px 20px rgba(59, 42, 26, 0.25);
       }
-      .btn-submit:active {
+      .btn-submit:active:not(:disabled) {
         transform: scale(0.98);
       }
-
-      /* Thank you screen */
+      .btn-submit:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+      #toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(16px);
+        background: #2d1a0e;
+        color: #fff;
+        font-size: 13px;
+        padding: 12px 20px;
+        border-radius: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          opacity 0.25s,
+          transform 0.25s;
+        z-index: 100;
+      }
+      #toast.toast--visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
       .thankyou {
         display: none;
         flex-direction: column;
@@ -306,7 +316,6 @@
       .form-section.hide {
         display: none;
       }
-
       .ty-icon {
         width: 72px;
         height: 72px;
@@ -359,22 +368,19 @@
         border-color: var(--caramel);
         background: rgba(196, 132, 58, 0.06);
       }
-
       @media (max-width: 420px) {
         .header {
           padding: 24px 24px 20px;
         }
+        .header h1 {
+          font-size: 23px;
+        }
         .body {
           padding: 24px 24px 28px;
         }
-        .row-2 {
-          grid-template-columns: 1fr;
-        }
+        .row-2,
         .products-grid {
           grid-template-columns: 1fr;
-        }
-        .header h1 {
-          font-size: 23px;
         }
       }
     </style>
@@ -388,29 +394,40 @@
       </div>
 
       <div class="body form-section" id="formSection">
-        <!-- Name & Contact -->
         <div class="field">
-          <label>Your Name <span class="req">*</span></label>
+          <label for="name"
+            >Your Name <span class="req" aria-hidden="true">*</span></label
+          >
           <input
             type="text"
             id="name"
             placeholder="Full name"
             autocomplete="off"
+            aria-required="true"
+            aria-describedby="name-error"
           />
+          <span id="name-error" class="field-error" role="alert" hidden></span>
         </div>
 
         <div class="row-2">
           <div class="field">
-            <label>Email</label>
+            <label for="email">Email</label>
             <input
               type="email"
               id="email"
               placeholder="hello@email.com"
               autocomplete="off"
+              aria-describedby="email-error"
             />
+            <span
+              id="email-error"
+              class="field-error"
+              role="alert"
+              hidden
+            ></span>
           </div>
           <div class="field">
-            <label>WhatsApp / Phone</label>
+            <label for="phone">WhatsApp / Phone</label>
             <input
               type="tel"
               id="phone"
@@ -422,140 +439,285 @@
 
         <hr class="divider" />
 
-        <!-- Product Interest -->
         <div class="field">
           <label>Products I'm Interested In</label>
           <div class="products-grid">
             <label class="product-item">
               <input type="checkbox" name="product" value="biochar" />
-              <span class="product-label">
-                <span class="product-icon">🌱</span>
-                <span class="product-name">Biochar</span>
-              </span>
+              <span class="product-label"
+                ><span class="product-icon">🌱</span
+                ><span class="product-name">Biochar</span></span
+              >
             </label>
             <label class="product-item">
               <input type="checkbox" name="product" value="briquettes" />
-              <span class="product-label">
-                <span class="product-icon">🔥</span>
-                <span class="product-name">Bio-Briquettes</span>
-              </span>
+              <span class="product-label"
+                ><span class="product-icon">🔥</span
+                ><span class="product-name">Bio-Briquettes</span></span
+              >
             </label>
             <label class="product-item">
               <input type="checkbox" name="product" value="compost" />
-              <span class="product-label">
-                <span class="product-icon">♻️</span>
-                <span class="product-name">Compost</span>
-              </span>
+              <span class="product-label"
+                ><span class="product-icon">♻️</span
+                ><span class="product-name">Compost</span></span
+              >
             </label>
             <label class="product-item">
               <input type="checkbox" name="product" value="coaster" />
-              <span class="product-label">
-                <span class="product-icon">☕</span>
-                <span class="product-name">Coaster</span>
-              </span>
+              <span class="product-label"
+                ><span class="product-icon">☕</span
+                ><span class="product-name">Coaster</span></span
+              >
             </label>
             <label class="product-item">
               <input type="checkbox" name="product" value="candles" />
-              <span class="product-label">
-                <span class="product-icon">🕯️</span>
-                <span class="product-name">Scented Candles</span>
-              </span>
+              <span class="product-label"
+                ><span class="product-icon">🕯️</span
+                ><span class="product-name">Scented Candles</span></span
+              >
             </label>
             <label class="product-item">
               <input type="checkbox" name="product" value="soap" />
-              <span class="product-label">
-                <span class="product-icon">🧼</span>
-                <span class="product-name">Coffee Soap</span>
-              </span>
+              <span class="product-label"
+                ><span class="product-icon">🧼</span
+                ><span class="product-name">Coffee Soap</span></span
+              >
             </label>
           </div>
         </div>
 
         <hr class="divider" />
 
-        <!-- Overall Rating -->
         <div class="field">
           <label>Overall Impression</label>
-          <div class="stars">
+          <div
+            class="stars"
+            role="radiogroup"
+            aria-label="Rating 1 sampai 5 bintang"
+          >
             <input type="radio" name="rating" id="s5" value="5" /><label
               for="s5"
+              aria-label="5 bintang"
               >★</label
             >
             <input type="radio" name="rating" id="s4" value="4" /><label
               for="s4"
+              aria-label="4 bintang"
               >★</label
             >
             <input type="radio" name="rating" id="s3" value="3" /><label
               for="s3"
+              aria-label="3 bintang"
               >★</label
             >
             <input type="radio" name="rating" id="s2" value="2" /><label
               for="s2"
+              aria-label="2 bintang"
               >★</label
             >
             <input type="radio" name="rating" id="s1" value="1" /><label
               for="s1"
+              aria-label="1 bintang"
               >★</label
             >
           </div>
         </div>
 
-        <!-- Comments -->
         <div class="field">
-          <label>Comments & Suggestions</label>
+          <label for="comments">Comments &amp; Suggestions</label>
           <textarea
             id="comments"
             placeholder="Share your thoughts, ideas, or questions about Rebru…"
           ></textarea>
         </div>
 
-        <button class="btn-submit" onclick="submitForm()">
+        <button class="btn-submit" id="submitBtn" type="button">
           Submit Feedback →
         </button>
       </div>
 
-      <!-- Thank You Screen -->
       <div class="thankyou" id="thankyou">
-        <div class="ty-icon">✓</div>
+        <div class="ty-icon" aria-hidden="true">✓</div>
         <div class="ty-title">Terima Kasih!</div>
         <p class="ty-sub">
           Thank you for visiting Rebru's booth. Your feedback means a lot to us
           and helps us build a better circular economy. 🌿
         </p>
-        <button class="btn-reset" onclick="resetForm()">Next Visitor</button>
+        <button class="btn-reset" type="button" id="resetBtn">
+          Next Visitor
+        </button>
       </div>
     </div>
 
+    <div id="toast"></div>
+
+    <!-- Supabase CDN — UMD build, expose window.supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
     <script>
-      function submitForm() {
-        const name = document.getElementById("name").value.trim();
-        if (!name) {
-          document.getElementById("name").focus();
-          document.getElementById("name").style.borderColor = "#C4843A";
-          setTimeout(
-            () => (document.getElementById("name").style.borderColor = ""),
-            1500,
-          );
-          return;
-        }
-        document.getElementById("formSection").classList.add("hide");
-        document.getElementById("thankyou").classList.add("show");
+      // ── Init Supabase ─────────────────────────────────────────────
+      const { createClient } = window.supabase;
+      const db = createClient(
+        "https://eldrclunicbxtapgbcms.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVsZHJjbHVuaWNieHRhcGdiY21zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzQ2MjIsImV4cCI6MjA5NDI1MDYyMn0.75a56wGtRecBTHD6frS9YJdVuIBG5t-uzo1HXcBDvwE",
+        { auth: { persistSession: false } },
+      );
+      console.log("[Rebru] ✓ Supabase client ready");
+
+      // ── Cache produk ──────────────────────────────────────────────
+      let _productCache = null;
+      async function getProducts() {
+        if (_productCache) return { data: _productCache, error: null };
+        const { data, error } = await db
+          .from("products")
+          .select("id, name, slug")
+          .order("name");
+        if (!error) _productCache = data;
+        return { data, error };
       }
 
-      function resetForm() {
-        document.getElementById("name").value = "";
-        document.getElementById("email").value = "";
-        document.getElementById("phone").value = "";
-        document.getElementById("comments").value = "";
-        document
-          .querySelectorAll('input[type="checkbox"]')
-          .forEach((c) => (c.checked = false));
-        document
-          .querySelectorAll('input[type="radio"]')
-          .forEach((r) => (r.checked = false));
-        document.getElementById("thankyou").classList.remove("show");
-        document.getElementById("formSection").classList.remove("hide");
+      // ── DOM refs ──────────────────────────────────────────────────
+      const $ = (id) => document.getElementById(id);
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      // ── Validation ────────────────────────────────────────────────
+      function validateForm() {
+        const errors = {};
+        if (!$("name").value.trim()) errors.name = "Nama wajib diisi.";
+        const email = $("email").value.trim();
+        if (email && !EMAIL_RE.test(email))
+          errors.email = "Format email tidak valid.";
+        return { valid: Object.keys(errors).length === 0, errors };
       }
+
+      function setFieldError(id, msg) {
+        const el = $(id + "-error");
+        if (!el) return;
+        $(id).setAttribute("aria-invalid", "true");
+        el.textContent = msg;
+        el.hidden = false;
+      }
+      function clearFieldError(id) {
+        const el = $(id + "-error");
+        if (!el) return;
+        $(id).removeAttribute("aria-invalid");
+        el.textContent = "";
+        el.hidden = true;
+      }
+
+      // ── Toast ─────────────────────────────────────────────────────
+      function showToast(msg) {
+        const t = $("toast");
+        t.textContent = msg;
+        t.classList.add("toast--visible");
+        clearTimeout(t._timer);
+        t._timer = setTimeout(() => t.classList.remove("toast--visible"), 5000);
+      }
+
+      // ── Button loading state ──────────────────────────────────────
+      function setLoading(on) {
+        $("submitBtn").disabled = on;
+        $("submitBtn").textContent = on ? "Mengirim…" : "Submit Feedback →";
+      }
+
+      // ── Submit ────────────────────────────────────────────────────
+      async function handleSubmit() {
+        clearFieldError("name");
+        clearFieldError("email");
+
+        const { valid, errors } = validateForm();
+        if (!valid) {
+          Object.entries(errors).forEach(([f, m]) => setFieldError(f, m));
+          $(Object.keys(errors)[0])?.focus();
+          return;
+        }
+
+        setLoading(true);
+        try {
+          // Ambil produk
+          const { data: products, error: pErr } = await getProducts();
+          if (pErr) throw new Error("Gagal memuat data produk.");
+
+          const productMap = Object.fromEntries(
+            products.map((p) => [p.slug, p.id]),
+          );
+          const checkedSlugs = [
+            ...document.querySelectorAll('input[name="product"]:checked'),
+          ].map((el) => el.value);
+          const ratingEl = document.querySelector(
+            'input[name="rating"]:checked',
+          );
+
+          const payload = {
+            name: $("name").value.trim(),
+            email: $("email").value.trim() || null,
+            phone: $("phone").value.trim() || null,
+            rating: ratingEl ? Number(ratingEl.value) : null,
+            comments: $("comments").value.trim() || null,
+          };
+
+          // Insert visitor
+          const { data: visitor, error: vErr } = await db
+            .from("visitors")
+            .insert(payload)
+            .select("id")
+            .single();
+          if (vErr) throw new Error("Gagal menyimpan data: " + vErr.message);
+
+          // Insert product interests
+          const productIds = checkedSlugs
+            .map((s) => productMap[s])
+            .filter(Boolean);
+          if (productIds.length) {
+            const rows = productIds.map((pid) => ({
+              visitor_id: visitor.id,
+              product_id: pid,
+            }));
+            const { error: iErr } = await db
+              .from("visitor_product_interests")
+              .insert(rows);
+            if (iErr)
+              throw new Error(
+                "Data tersimpan, tapi minat produk gagal dicatat.",
+              );
+          }
+
+          // Sukses
+          $("formSection").classList.add("hide");
+          $("thankyou").classList.add("show");
+        } catch (err) {
+          showToast(err.message);
+        } finally {
+          setLoading(false);
+        }
+      }
+
+      // ── Reset ─────────────────────────────────────────────────────
+      function resetForm() {
+        ["name", "email", "phone", "comments"].forEach(
+          (id) => ($(id).value = ""),
+        );
+        document
+          .querySelectorAll('input[type="checkbox"], input[type="radio"]')
+          .forEach((el) => (el.checked = false));
+        clearFieldError("name");
+        clearFieldError("email");
+        $("thankyou").classList.remove("show");
+        $("formSection").classList.remove("hide");
+        $("name").focus();
+      }
+
+      // ── Event listeners ───────────────────────────────────────────
+      $("submitBtn").addEventListener("click", handleSubmit);
+      $("resetBtn").addEventListener("click", resetForm);
+      $("name").addEventListener("input", () => clearFieldError("name"));
+      $("email").addEventListener("blur", () => {
+        const v = $("email").value.trim();
+        if (v && !EMAIL_RE.test(v))
+          setFieldError("email", "Format email tidak valid.");
+        else clearFieldError("email");
+      });
     </script>
   </body>
 </html>
