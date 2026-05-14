@@ -1,0 +1,12 @@
+# Environment variables — JANGAN pernah di-commit
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+*.log
